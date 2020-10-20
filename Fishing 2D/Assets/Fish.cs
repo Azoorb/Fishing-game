@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using UnityEngine;
 
 public class Fish : MonoBehaviour
@@ -15,6 +16,8 @@ public class Fish : MonoBehaviour
     Vector2 pointToGo;
     [SerializeField]
     int chanceToGainSpeed;
+    [SerializeField]
+    float rangeToSeeDecoy;
 
     private void Awake()
     {
@@ -33,7 +36,23 @@ public class Fish : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveRandomly();
+        GameObject decoy = null;
+        Collider2D[] listColliderArround = Physics2D.OverlapCircleAll(transform.position, rangeToSeeDecoy);
+        foreach(Collider2D collider in listColliderArround)
+        {
+            if(collider.CompareTag("Decoy"))
+            {
+                decoy = collider.gameObject;
+            }
+        }
+        if(decoy != null)
+        {
+            GoAndLook(decoy.transform.position);
+        }
+        else
+        {
+            MoveRandomly();
+        }
     }
 
     IEnumerator RandomGainSpeed()
@@ -42,7 +61,7 @@ public class Fish : MonoBehaviour
         int randomChance = Random.Range(0, 100);
         if(randomChance<chanceToGainSpeed)
         {
-            Debug.Log("gagne");
+ 
             hasGainSpeed = true;
             StartCoroutine(GainSpeedSlowly(this.speed, this.speed, false));
 
@@ -74,7 +93,6 @@ public class Fish : MonoBehaviour
         if(actualSpeed <= startSpeed && hasSpeedMax)
         {
             StartCoroutine(RandomGainSpeed());
-            Debug.Log("stop");
         }
         else
         {
@@ -87,19 +105,17 @@ public class Fish : MonoBehaviour
     public void CreateMovementPoint()
     {
         float  oldRandomX = transform.position.x;
-        float oldRandomY= transform.position.y;
         float randomX, randomY;
         for(int i=0;i<totalMovementPoint;i++)
         {
             do
             {
                 randomX = Random.Range(spawnMin.x, spawnMax.x);
-                randomY = Random.Range(spawnMin.x, spawnMax.x);
+                randomY = Random.Range(spawnMin.y, spawnMax.y);
             }
             while (Mathf.Abs(randomX - oldRandomX) < minDistanceBetweenMovementPoint);
             movementPointList.Add(new Vector2(randomX, randomY));
             oldRandomX = randomX;
-            oldRandomY = randomY;
         }
     }
 
@@ -109,12 +125,18 @@ public class Fish : MonoBehaviour
         {
             pointToGo = ChooseRandomPoint(pointToGo);
         }
-        Vector2 diff = (Vector2)transform.position - pointToGo;
+        GoAndLook(pointToGo);
+        
+    }
+
+    void GoAndLook(Vector2 toGo)
+    {
+        Vector2 diff = (Vector2)transform.position - toGo;
         diff.Normalize();
 
         float rotZ = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(transform.rotation.x,transform.rotation.y, rotZ);
-        transform.position = Vector2.MoveTowards(transform.position, pointToGo,speed*Time.deltaTime);
+        transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, rotZ);
+        transform.position = Vector2.MoveTowards(transform.position, toGo, speed * Time.deltaTime);
     }
 
     Vector2 ChooseRandomPoint(Vector2 oldMovementPoint)
@@ -133,7 +155,12 @@ public class Fish : MonoBehaviour
 
     }
 
+    private void OnDrawGizmos()
+    {
+        
+    }
 
 
-    
+
+
 }
