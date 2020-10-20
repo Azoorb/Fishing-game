@@ -16,8 +16,9 @@ public class Fish : MonoBehaviour
     Vector2 pointToGo;
     [SerializeField]
     int chanceToGainSpeed;
-    [SerializeField]
-    float rangeToSeeDecoy;
+    [SerializeField,Range(0,100)]
+    float rangeToSeeDecoy,rangeToSlowNearDecoy, rangeToPickDecoy;
+    bool isGrab, seeTheDecoy;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class Fish : MonoBehaviour
         water = GameObject.Find("Water");
         pointToGo = new Vector2(0, 0);
         minDistanceBetweenMovementPoint = Mathf.Abs(spawnMin.x -spawnMax.x)/10;
+        isGrab = false;
     }
 
     void Start()
@@ -33,38 +35,81 @@ public class Fish : MonoBehaviour
         StartCoroutine(RandomGainSpeed());
     }
 
+    Collider2D CheckIfDecoyAround()
+    {
+        Collider2D decoy = null;
+        Collider2D[] listColliderArround = Physics2D.OverlapCircleAll(transform.position, rangeToSeeDecoy);
+        foreach (Collider2D collider in listColliderArround)
+        {
+            if (collider.CompareTag("Decoy"))
+            {
+                decoy = collider;
+            }
+        }
+        return decoy;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        GameObject decoy = null;
-        Collider2D[] listColliderArround = Physics2D.OverlapCircleAll(transform.position, rangeToSeeDecoy);
-        foreach(Collider2D collider in listColliderArround)
+        if(!isGrab)
         {
-            if(collider.CompareTag("Decoy"))
+            GameObject decoy = null;
+            Collider2D decoyCollider = CheckIfDecoyAround();
+            if (decoyCollider != null)
             {
-                decoy = collider.gameObject;
+                decoy = decoyCollider.gameObject;
+                seeTheDecoy = true;
+            }
+            else
+            {
+                seeTheDecoy = false;
+            }
+            if (decoy != null && decoy.transform.position.y < 0)
+            {
+                
+                
+                if (Vector2.Distance(transform.position, decoy.transform.position) <= rangeToPickDecoy)
+                {
+                    GrabDecoy(decoy);
+                }
+                else if (Vector2.Distance(transform.position, decoy.transform.position) <= rangeToSlowNearDecoy)
+                {
+                    GoAndLook(decoy.transform.position, 0.3f);
+                }
+                else
+                {
+                    GoAndLook(decoy.transform.position, 1);
+                }
+
+            }
+            else
+            {
+                MoveRandomly();
             }
         }
-        if(decoy != null)
-        {
-            GoAndLook(decoy.transform.position);
-        }
-        else
-        {
-            MoveRandomly();
-        }
+       
+    }
+
+    void GrabDecoy(GameObject decoy)
+    {
+        transform.SetParent(decoy.transform);
+        transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, -90);
+        transform.position = new Vector3(decoy.transform.position.x, decoy.transform.position.y,decoy.transform.position.z - 0.1f);
+        decoy.GetComponent<Decoy>().fish = gameObject;
+
+        isGrab = true;
     }
 
     IEnumerator RandomGainSpeed()
     {
+        
         bool hasGainSpeed = false;
         int randomChance = Random.Range(0, 100);
-        if(randomChance<chanceToGainSpeed)
+        if(randomChance<chanceToGainSpeed && !seeTheDecoy)
         {
- 
             hasGainSpeed = true;
             StartCoroutine(GainSpeedSlowly(this.speed, this.speed, false));
-
         }
         if(!hasGainSpeed)
         {
@@ -77,28 +122,38 @@ public class Fish : MonoBehaviour
 
     IEnumerator GainSpeedSlowly(float startSpeed,float actualSpeed,bool hasSpeedMax)
     {
-        if(actualSpeed+0.01> startSpeed * 2)
+        if(seeTheDecoy)
         {
-            hasSpeedMax = true;
-        }
-        if(hasSpeedMax)
-        {
-            actualSpeed -= 0.01f;
+            StopCoroutine(GainSpeedSlowly(startSpeed,actualSpeed,hasSpeedMax));
+            this.speed = startSpeed;
+            yield return new WaitForSeconds(0);
         }
         else
         {
-            actualSpeed += 0.01f;
+            if (actualSpeed + 0.01 > startSpeed * 2)
+            {
+                hasSpeedMax = true;
+            }
+            if (hasSpeedMax)
+            {
+                actualSpeed -= 0.01f;
+            }
+            else
+            {
+                actualSpeed += 0.01f;
+            }
+            this.speed = actualSpeed;
+            if (actualSpeed <= startSpeed && hasSpeedMax)
+            {
+                StartCoroutine(RandomGainSpeed());
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.05f);
+                StartCoroutine(GainSpeedSlowly(startSpeed, actualSpeed, hasSpeedMax));
+            }
         }
-        this.speed = actualSpeed;
-        if(actualSpeed <= startSpeed && hasSpeedMax)
-        {
-            StartCoroutine(RandomGainSpeed());
-        }
-        else
-        {
-            yield return new WaitForSeconds(0.05f);
-            StartCoroutine(GainSpeedSlowly(startSpeed, actualSpeed, hasSpeedMax));
-        }
+        
         
     }
 
@@ -125,18 +180,18 @@ public class Fish : MonoBehaviour
         {
             pointToGo = ChooseRandomPoint(pointToGo);
         }
-        GoAndLook(pointToGo);
+        GoAndLook(pointToGo,1);
         
     }
 
-    void GoAndLook(Vector2 toGo)
+    void GoAndLook(Vector2 toGo,float speedMultiply)
     {
         Vector2 diff = (Vector2)transform.position - toGo;
         diff.Normalize();
 
         float rotZ = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, rotZ);
-        transform.position = Vector2.MoveTowards(transform.position, toGo, speed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, toGo, speed * speedMultiply * Time.deltaTime);
     }
 
     Vector2 ChooseRandomPoint(Vector2 oldMovementPoint)

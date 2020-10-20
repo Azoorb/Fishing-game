@@ -22,11 +22,11 @@ public class Player : MonoBehaviour
     Vector2 directionToApplyToDecoy;
     [SerializeField]
     float forceToApplyToDecoy;
-    bool isFishing = false;
+    public bool isFishing = false;
     [SerializeField]
     GameObject camera;
     GameObject decoy;
-    bool rideUp;
+    public bool rideUp;
     private void Awake()
     {
         if(instance == null)
@@ -65,7 +65,7 @@ public class Player : MonoBehaviour
         AttachCameraAndSetPosition(transform);
     }
 
-    void AttachCameraAndSetPosition(Transform transformToAttach)
+    public void AttachCameraAndSetPosition(Transform transformToAttach)
     {
         camera.transform.SetParent(transformToAttach);
         camera.transform.position = new Vector3(transformToAttach.position.x, 
@@ -81,8 +81,12 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move(movementValue);
-        if(rideUp && decoy.GetComponent<Decoy>().InWaterOrNot())
+        if(!isFishing)
+        {
+            Move(movementValue);
+        }
+        
+        if(rideUp && decoy != null &&  decoy.GetComponent<Decoy>().InWaterOrNot())
         {
             decoy.transform.position = Vector2.MoveTowards(decoy.transform.position,transform.position,11*Time.deltaTime);
         }
@@ -113,12 +117,11 @@ public class Player : MonoBehaviour
             
             if (goodShoot)
             {
-                Debug.Log("good");
+
                 LaunchDecoy(2);
             }
             else
             {
-                Debug.Log("bad");
                 LaunchDecoy(1);
             }
             isFishing = true;

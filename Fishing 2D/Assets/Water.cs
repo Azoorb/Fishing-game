@@ -4,5 +4,11 @@ using UnityEngine;
 
 public class Water : MonoBehaviour
 {
-   
+    [SerializeField]
+    float topOfWater;
+
+    public float getTopOfWater()
+    {
+        return topOfWater;
+    }
 }

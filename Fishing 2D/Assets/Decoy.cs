@@ -9,10 +9,12 @@ public class Decoy : MonoBehaviour
     [SerializeField]
     float depthLimit;
     float touchWaterPoint;
+    public GameObject fish;
     // Start is called before the first frame update
     void Start()
     {
         touchWaterPoint = 999;
+        transform.position = new Vector3(transform.position.x, transform.position.y, 1);
     }
 
     // Update is called once per frame
@@ -54,6 +56,20 @@ public class Decoy : MonoBehaviour
             rigidBody.gravityScale = 0;
             touchWaterPoint = collision.transform.position.y;
         }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.collider.CompareTag("Player"))
+        {
+            Debug.Log("J'ai attrapé un poisson !");
+            Player.instance.isFishing = false;
+            Player.instance.rideUp = false;
+            Destroy(fish);
+            Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
+            Destroy(gameObject);
+        }
+
     }
 
     public bool InWaterOrNot()
