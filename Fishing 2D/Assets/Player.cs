@@ -27,12 +27,14 @@ public class Player : MonoBehaviour
     GameObject camera;
     GameObject decoy;
     public bool rideUp;
+    public List<Fish> fishCaughtList;
     private void Awake()
     {
         if(instance == null)
         {
             instance = this;
         }
+        fishCaughtList = new List<Fish>();
         controller = new PlayerController();
         controller.Player.Move.performed += ctx => movementValue = ctx.ReadValue<float>();
         controller.Player.Move.canceled += ctx => movementValue =  0;
@@ -137,7 +139,22 @@ public class Player : MonoBehaviour
         AttachCameraAndSetPosition(decoy.transform);
     }
 
-    
+    public void SellAllFish()
+    {
+        if(fishCaughtList.Count == 0)
+        {
+            Debug.Log("Vous n'avez pas de poisson !");
+        }
+        else
+        {
+            int amount =0;
+            foreach(Fish fish in fishCaughtList)
+            {
+                amount += fish.getPrice();
+            }
+            Debug.Log("Vous avez gagné " + amount + " argent");
+        }
+    }
 
     public void FailFishing()
     {

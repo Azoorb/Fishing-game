@@ -10,7 +10,6 @@ public class Fish : MonoBehaviour
     [SerializeField]
     protected float speed, size;
     List<Vector2> movementPointList;
-    GameObject water;
     int totalMovementPoint = 10;
     float minDistanceBetweenMovementPoint;
     Vector2 pointToGo;
@@ -19,11 +18,12 @@ public class Fish : MonoBehaviour
     [SerializeField,Range(0,100)]
     float rangeToSeeDecoy,rangeToSlowNearDecoy, rangeToPickDecoy;
     bool isGrab, seeTheDecoy;
+    [SerializeField]
+    int price;
 
     private void Awake()
     {
         movementPointList = new List<Vector2>();
-        water = GameObject.Find("Water");
         pointToGo = new Vector2(0, 0);
         minDistanceBetweenMovementPoint = Mathf.Abs(spawnMin.x -spawnMax.x)/10;
         isGrab = false;
@@ -210,10 +210,23 @@ public class Fish : MonoBehaviour
 
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, rangeToSeeDecoy);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, rangeToSlowNearDecoy);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, rangeToPickDecoy);
+
     }
+
+    public int getPrice()
+    {
+        return price;
+    }
+
+    
 
 
 

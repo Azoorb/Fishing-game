@@ -62,11 +62,13 @@ public class Decoy : MonoBehaviour
     {
         if(collision.collider.CompareTag("Player"))
         {
-            Debug.Log("J'ai attrapé un poisson !");
+            Debug.Log("J'ai attrapé un poisson ! J'ai gagné "+ fish.GetComponent<Fish>().getPrice()+ " argent.");
             Player.instance.isFishing = false;
             Player.instance.rideUp = false;
+            Player.instance.fishCaughtList.Add(fish.GetComponent<Fish>());
             Destroy(fish);
             Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
+            Debug.Log(Player.instance.fishCaughtList[0].getPrice());
             Destroy(gameObject);
         }
 
