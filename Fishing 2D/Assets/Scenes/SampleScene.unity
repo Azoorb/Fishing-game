@@ -497,7 +497,7 @@ GameObject:
   - component: {fileID: 414394865}
   m_Layer: 11
   m_Name: boat
-  m_TagString: Untagged
+  m_TagString: Boat
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -520,6 +520,7 @@ MonoBehaviour:
   radiusToGoInBoat: 4
   speed: 4.39
   valueToMove: 0
+  fishCaughtList: []
 --- !u!61 &414394862
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -984,7 +985,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 923380765}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: SellAllFish
+        m_MethodName: PushButtonSellAllFish
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1470,7 +1471,7 @@ MonoBehaviour:
   directionToApplyToDecoy: {x: 10, y: 20}
   forceToApplyToDecoy: 10
   isFishing: 0
-  camera: {fileID: 519420028}
+  cameraScene: {fileID: 519420028}
   rideUp: 0
   fishCaughtList: []
   inBoat: 0
@@ -1734,13 +1735,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 923380764}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 923380765}
+        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
+        m_MethodName: PushButtonGoOutOfBoat
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1928,6 +1929,7 @@ GameObject:
   - component: {fileID: 1957928431}
   - component: {fileID: 1957928430}
   - component: {fileID: 1957928429}
+  - component: {fileID: 1957928432}
   m_Layer: 8
   m_Name: grass
   m_TagString: Ground
@@ -2022,10 +2024,24 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -12.014, y: 0.29, z: 0}
   m_LocalScale: {x: 28.735466, y: -12.310648, z: 3.1128}
-  m_Children: []
+  m_Children:
+  - {fileID: 2048957418}
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1957928432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957928428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fb96ae18a15b5e48a223ee65a4cc416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointToAccost: {fileID: 2048957417}
 --- !u!1 &2046558750
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,6 +2121,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046558750}
   m_CullTransparentMesh: 0
+--- !u!1 &2048957417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2048957418}
+  m_Layer: 8
+  m_Name: AccostPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2048957418
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048957417}
+  m_LocalRotation: {x: 0, y: -0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.104, y: -0.276, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1957928431}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2092113839
 GameObject:
   m_ObjectHideFlags: 0

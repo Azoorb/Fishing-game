@@ -77,12 +77,14 @@ public class Decoy : MonoBehaviour
             {
                 GameObject pointToStock = GameObject.Find("PointToStockFishNoBoat");
                 StockFish(pointToStock.transform);
+                Player.instance.fishCaughtList.Add(fish.GetComponent<Fish>());
             }
             else if(Player.instance.inBoat && Player.instance.boat.GetComponent<Boat>().stockInBoatForFish> Player.instance.fishCaughtList.Count)
             {
                 StockFish(Player.instance.boat.GetComponent<Boat>().fishStockPlaceTransform);
+                Player.instance.boat.GetComponent<Boat>().fishCaughtList.Add(fish.GetComponent<Fish>());
             }
-            Player.instance.fishCaughtList.Add(fish.GetComponent<Fish>());
+            
             Destroy(fish);
             
         }
@@ -93,11 +95,22 @@ public class Decoy : MonoBehaviour
 
     void StockFish(Transform place)
     {
-        
-        GameObject deadFish = Instantiate(deadFishPrefab,
+        GameObject deadFish;
+        if(Player.instance.inBoat)
+        {
+            deadFish = Instantiate(deadFishPrefab,
+            new Vector2(place.position.x,
+            (float)(place.position.y + 0.25 * Player.instance.boat.GetComponent<Boat>().fishCaughtList.Count)),
+            Quaternion.identity); 
+        }
+        else
+        {
+            deadFish = Instantiate(deadFishPrefab,
             new Vector2(place.position.x,
             (float)(place.position.y + 0.25 * Player.instance.fishCaughtList.Count)),
             Quaternion.identity);
+        }
+        
         deadFish.GetComponent<SpriteRenderer>().sprite = fish.GetComponent<Fish>().deadSprite;
 
         deadFish.transform.localScale = fish.transform.lossyScale;

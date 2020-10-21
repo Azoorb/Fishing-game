@@ -22,14 +22,20 @@ public class Player : MonoBehaviour
     Vector2 directionToApplyToDecoy;
     [SerializeField]
     float forceToApplyToDecoy;
+    [HideInInspector]
     public bool isFishing = false;
     [SerializeField]
-    GameObject camera;
+    GameObject cameraScene;
     GameObject decoy;
+    [HideInInspector]
     public bool rideUp;
+    [HideInInspector]
     public List<Fish> fishCaughtList;
+    [HideInInspector]
     public bool inBoat = false;
+    [HideInInspector]
     public GameObject boat;
+    Ground groundNear;
     private void Awake()
     {
         if(instance == null)
@@ -90,9 +96,9 @@ public class Player : MonoBehaviour
 
     public void AttachCameraAndSetPosition(Transform transformToAttach)
     {
-        camera.transform.SetParent(transformToAttach);
-        camera.transform.position = new Vector3(transformToAttach.position.x, 
-            transformToAttach.position.y, camera.transform.position.z);
+        cameraScene.transform.SetParent(transformToAttach);
+        cameraScene.transform.position = new Vector3(transformToAttach.position.x, 
+            transformToAttach.position.y, cameraScene.transform.position.z);
         
     }
 
@@ -104,19 +110,64 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isFishing || !inBoat)
+        if (inBoat)
+        {
+            transform.position = boat.GetComponent<Boat>().navigationPlaceTransform.position;
+            Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position, 5);
+            Ground groundNearTemp = null;
+            foreach (Collider2D collider in listCollider)
+            {
+                if (collider.CompareTag("Ground"))
+                {
+                    groundNearTemp = collider.GetComponent<Ground>();
+                }
+            }
+            if (groundNearTemp == null)
+            {
+                groundNear = null;
+                UIManager.instance.SetActiveButtonGoOutOfBoat(false);
+            }
+            else
+            {
+                groundNear = groundNearTemp;
+                UIManager.instance.SetActiveButtonGoOutOfBoat(true);
+            }
+        }
+        else if (!inBoat)
+        {            
+            Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position, 5);
+            Boat boatNearTemp = null;
+            foreach (Collider2D collider in listCollider)
+            {
+                if (collider.CompareTag("Boat"))
+                {
+                    boatNearTemp = collider.GetComponent<Boat>();
+                }
+            }
+            if (boatNearTemp == null)
+            {
+                UIManager.instance.SetActiveButtonGoInBoat(false);
+            }
+            else
+            {
+                UIManager.instance.SetActiveButtonGoInBoat(true);
+            }
+        }
+        
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isFishing || !inBoat)
         {
             Move(movementValue);
         }
+
+        if (rideUp && decoy != null && decoy.GetComponent<Decoy>().InWaterOrNot())
+        {
+            decoy.transform.position = Vector2.MoveTowards(decoy.transform.position, transform.position, 11 * Time.deltaTime);
+        }
         
-        if(rideUp && decoy != null &&  decoy.GetComponent<Decoy>().InWaterOrNot())
-        {
-            decoy.transform.position = Vector2.MoveTowards(decoy.transform.position,transform.position,11*Time.deltaTime);
-        }
-        if(inBoat)
-        {
-            transform.position = boat.GetComponent<Boat>().navigationPlaceTransform.position;
-        }
     }
 
 
@@ -130,16 +181,17 @@ public class Player : MonoBehaviour
         controller.Player.Disable();
     }
 
+   
     void StartFishing()
     {
         
 
-        if (bar.active == false)
+        if (bar.activeSelf == false)
         {
             bar.SetActive(true);
             bar.transform.GetChild(0).GetComponent<Animator>().SetTrigger("Launch");
         }
-        else if(bar.active == true )
+        else if(bar.activeSelf == true )
         {
             
             if (goodShoot)
@@ -181,12 +233,31 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, 5);
+    }
+
     public void GoInBoat()
     {
         inBoat = true;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         transform.position = boat.GetComponent<Boat>().navigationPlaceTransform.position;
         transform.SetParent(boat.transform);
         
+    }
+
+    public void GoOutOfBoat()
+    {
+
+        transform.SetParent(null);
+        inBoat = false;
+        transform.position = groundNear.pointToAccost.transform.position;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        //J'sais pas pourquoi il se déplaçait de temps en temps
+        movementValue = 0;
+
     }
 
 

@@ -12,7 +12,12 @@ public class Boat : MonoBehaviour
     float radiusToGoInBoat,speed;
     [HideInInspector]
     public float valueToMove;
-    
+    public List<Fish> fishCaughtList;
+
+    private void Start()
+    {
+        fishCaughtList = new List<Fish>();
+    }
     // Update is called once per frame
     void Update()
     {
