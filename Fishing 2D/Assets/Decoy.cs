@@ -16,6 +16,7 @@ public class Decoy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        depthLimit = Player.instance.depthLimit;
         touchWaterPoint = 999;
         transform.position = new Vector3(transform.position.x, transform.position.y, 1);
     }
@@ -37,6 +38,14 @@ public class Decoy : MonoBehaviour
             }
         }
         CreateLine(Player.instance.transform.position);
+        Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position,0.5f);
+        foreach(Collider2D collider in listCollider)
+        {
+            if(collider.CompareTag("End"))
+            {
+                GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, 0);
+            }
+        }
     }
 
     void CreateLine(Vector2 positionToCreateLine)
@@ -61,11 +70,6 @@ public class Decoy : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-
-    }
 
     public void GetBackFish()
     {
@@ -90,6 +94,13 @@ public class Decoy : MonoBehaviour
         }
         Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
         Destroy(gameObject);
+        
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
         
     }
 

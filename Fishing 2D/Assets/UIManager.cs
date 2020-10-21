@@ -8,7 +8,7 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     [SerializeField]
-    GameObject buttonGoInBoat, buttonOutOfBoat, panelShop, buttonSellAllFish;
+    GameObject buttonGoInBoat, buttonOutOfBoat, panelShop, buttonSellAllFish,moneyTextShop;
     [SerializeField]
     TextMeshProUGUI moneyText;
     [SerializeField]
@@ -106,7 +106,10 @@ public class UIManager : MonoBehaviour
         buttonShop.SetActive(false);
         buttonSellAllFish.SetActive(false);
         moneyText.gameObject.SetActive(false);
-        
+        moneyTextShop.SetActive(true);
+        moneyTextShop.GetComponent<TextMeshProUGUI>().text = moneyText.text;
+
+
     }
 
     public void CloseShop()
@@ -116,5 +119,6 @@ public class UIManager : MonoBehaviour
         buttonShop.SetActive(true);
         moneyText.gameObject.SetActive(true);
         buttonSellAllFish.SetActive(true);
+        moneyTextShop.SetActive(false);
     }
 }

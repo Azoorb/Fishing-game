@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
     public int money;
     [HideInInspector]
     public bool inShop = false;
-
+    public float depthLimit;
     private void Awake()
     {
         if(instance == null)
