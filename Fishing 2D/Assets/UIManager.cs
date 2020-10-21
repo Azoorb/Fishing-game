@@ -1,12 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
     [SerializeField]
-    GameObject buttonGoInBoat, buttonOutOfBoat;
+    GameObject buttonGoInBoat, buttonOutOfBoat, panelShop, buttonSellAllFish;
+    [SerializeField]
+    TextMeshProUGUI moneyText;
+    [SerializeField]
+    GameObject buttonShop;
 
 
     private void Awake()
@@ -51,8 +57,15 @@ public class UIManager : MonoBehaviour
                 Destroy(pointToStock.transform.GetChild(i).gameObject);
             }
             Debug.Log("Vous avez gagné " + amount + " argent");
+            Player.instance.money += amount;
+            SetTextTotalMoney(Player.instance.money);
             fishCaughtList.Clear();
         } 
+    }
+
+    public void SetTextTotalMoney(int money)
+    {
+        moneyText.text = "Money : " + money.ToString();
     }
 
     public void SetActiveButtonGoInBoat(bool active)
@@ -82,5 +95,26 @@ public class UIManager : MonoBehaviour
     public void SetActiveButtonGoOutOfBoat(bool active)
     {
         buttonOutOfBoat.SetActive(active);
+    }
+
+    public void OpenShop()
+    {
+        Player.instance.inShop = true;
+        panelShop.SetActive(true);
+        buttonOutOfBoat.SetActive(false);
+        buttonGoInBoat.SetActive(false);
+        buttonShop.SetActive(false);
+        buttonSellAllFish.SetActive(false);
+        moneyText.gameObject.SetActive(false);
+        
+    }
+
+    public void CloseShop()
+    {
+        Player.instance.inShop = false;
+        panelShop.SetActive(false);
+        buttonShop.SetActive(true);
+        moneyText.gameObject.SetActive(true);
+        buttonSellAllFish.SetActive(true);
     }
 }

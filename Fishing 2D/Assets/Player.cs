@@ -36,6 +36,11 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public GameObject boat;
     Ground groundNear;
+    [HideInInspector]
+    public int money;
+    [HideInInspector]
+    public bool inShop = false;
+
     private void Awake()
     {
         if(instance == null)
@@ -70,7 +75,7 @@ public class Player : MonoBehaviour
         
         controller.Player.LaunchDecoy.performed += ctx =>
         {
-            if (!isFishing)
+            if (!isFishing && CheckIfColliderAround(2,"Water"))
             {
                 StartFishing();
             }
@@ -94,6 +99,18 @@ public class Player : MonoBehaviour
         AttachCameraAndSetPosition(transform);
     }
 
+    bool CheckIfColliderAround(float radius,string tag)
+    {
+        Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position, radius);
+        foreach (Collider2D collider in listCollider)
+        {
+            if (collider.CompareTag(tag))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     public void AttachCameraAndSetPosition(Transform transformToAttach)
     {
         cameraScene.transform.SetParent(transformToAttach);
@@ -135,16 +152,8 @@ public class Player : MonoBehaviour
         }
         else if (!inBoat)
         {            
-            Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position, 5);
-            Boat boatNearTemp = null;
-            foreach (Collider2D collider in listCollider)
-            {
-                if (collider.CompareTag("Boat"))
-                {
-                    boatNearTemp = collider.GetComponent<Boat>();
-                }
-            }
-            if (boatNearTemp == null)
+            
+            if (!CheckIfColliderAround(5,"Boat"))
             {
                 UIManager.instance.SetActiveButtonGoInBoat(false);
             }
@@ -237,6 +246,8 @@ public class Player : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, 5);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, 2);
     }
 
     public void GoInBoat()
