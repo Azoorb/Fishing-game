@@ -101,5 +101,7 @@ MonoBehaviour:
   size: 0
   chanceToGainSpeed: 90
   rangeToSeeDecoy: 100
-  rangeToPickDecoy: 0
   rangeToSlowNearDecoy: 0
+  rangeToPickDecoy: 0
+  price: 0
+  deadSprite: {fileID: 21300000, guid: 5eb7b1999a8e6384db81aa2ae2372071, type: 3}

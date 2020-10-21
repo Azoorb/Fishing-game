@@ -20,6 +20,7 @@ public class Fish : MonoBehaviour
     bool isGrab, seeTheDecoy;
     [SerializeField]
     int price;
+    public Sprite deadSprite;
 
     private void Awake()
     {
@@ -54,6 +55,7 @@ public class Fish : MonoBehaviour
     {
         if(!isGrab)
         {
+
             GameObject decoy = null;
             Collider2D decoyCollider = CheckIfDecoyAround();
             if (decoyCollider != null)
@@ -65,7 +67,7 @@ public class Fish : MonoBehaviour
             {
                 seeTheDecoy = false;
             }
-            if (decoy != null && decoy.transform.position.y < 0)
+            if (decoy != null && decoy.transform.position.y < 0 && decoy.GetComponent<Decoy>().fish == null)
             {
                 
                 

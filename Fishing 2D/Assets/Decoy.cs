@@ -9,7 +9,10 @@ public class Decoy : MonoBehaviour
     [SerializeField]
     float depthLimit;
     float touchWaterPoint;
+    [HideInInspector]
     public GameObject fish;
+    [SerializeField]
+    GameObject deadFishPrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -60,18 +63,45 @@ public class Decoy : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.collider.CompareTag("Player"))
+        
+
+    }
+
+    public void GetBackFish()
+    {
+        Player.instance.isFishing = false;
+        Player.instance.rideUp = false;
+        if (fish != null)
         {
-            Debug.Log("J'ai attrapé un poisson ! J'ai gagné "+ fish.GetComponent<Fish>().getPrice()+ " argent.");
-            Player.instance.isFishing = false;
-            Player.instance.rideUp = false;
+            if (Player.instance.fishCaughtList.Count < 3 && !Player.instance.inBoat)
+            {
+                GameObject pointToStock = GameObject.Find("PointToStockFishNoBoat");
+                StockFish(pointToStock.transform);
+            }
+            else if(Player.instance.inBoat && Player.instance.boat.GetComponent<Boat>().stockInBoatForFish> Player.instance.fishCaughtList.Count)
+            {
+                StockFish(Player.instance.boat.GetComponent<Boat>().fishStockPlaceTransform);
+            }
             Player.instance.fishCaughtList.Add(fish.GetComponent<Fish>());
             Destroy(fish);
-            Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
-            Debug.Log(Player.instance.fishCaughtList[0].getPrice());
-            Destroy(gameObject);
+            
         }
+        Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
+        Destroy(gameObject);
+        
+    }
 
+    void StockFish(Transform place)
+    {
+        
+        GameObject deadFish = Instantiate(deadFishPrefab,
+            new Vector2(place.position.x,
+            (float)(place.position.y + 0.25 * Player.instance.fishCaughtList.Count)),
+            Quaternion.identity);
+        deadFish.GetComponent<SpriteRenderer>().sprite = fish.GetComponent<Fish>().deadSprite;
+
+        deadFish.transform.localScale = fish.transform.lossyScale;
+        deadFish.transform.SetParent(place.transform);
     }
 
     public bool InWaterOrNot()

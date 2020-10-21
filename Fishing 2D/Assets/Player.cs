@@ -28,6 +28,8 @@ public class Player : MonoBehaviour
     GameObject decoy;
     public bool rideUp;
     public List<Fish> fishCaughtList;
+    public bool inBoat = false;
+    public GameObject boat;
     private void Awake()
     {
         if(instance == null)
@@ -36,18 +38,37 @@ public class Player : MonoBehaviour
         }
         fishCaughtList = new List<Fish>();
         controller = new PlayerController();
-        controller.Player.Move.performed += ctx => movementValue = ctx.ReadValue<float>();
-        controller.Player.Move.canceled += ctx => movementValue =  0;
+        controller.Player.Move.performed += ctx =>
+        {
+            if (inBoat)
+            {
+                boat.GetComponent<Boat>().valueToMove = ctx.ReadValue<float>();
+            }
+            else
+            {
+                movementValue = ctx.ReadValue<float>();
+            }
+
+        };
+        controller.Player.Move.canceled += ctx =>
+        {
+            if (inBoat)
+            {
+                boat.GetComponent<Boat>().valueToMove = 0;
+            }
+            else
+            {
+                movementValue = 0;
+            }
+        };
+        
         controller.Player.LaunchDecoy.performed += ctx =>
         {
             if (!isFishing)
             {
                 StartFishing();
             }
-            else
-            {
-                //RideUpDecoy();
-            }
+            
                
         };
         controller.Player.RideUpDecoy.performed += ctx =>
@@ -83,7 +104,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!isFishing)
+        if(!isFishing || !inBoat)
         {
             Move(movementValue);
         }
@@ -91,6 +112,10 @@ public class Player : MonoBehaviour
         if(rideUp && decoy != null &&  decoy.GetComponent<Decoy>().InWaterOrNot())
         {
             decoy.transform.position = Vector2.MoveTowards(decoy.transform.position,transform.position,11*Time.deltaTime);
+        }
+        if(inBoat)
+        {
+            transform.position = boat.GetComponent<Boat>().navigationPlaceTransform.position;
         }
     }
 
@@ -139,22 +164,7 @@ public class Player : MonoBehaviour
         AttachCameraAndSetPosition(decoy.transform);
     }
 
-    public void SellAllFish()
-    {
-        if(fishCaughtList.Count == 0)
-        {
-            Debug.Log("Vous n'avez pas de poisson !");
-        }
-        else
-        {
-            int amount =0;
-            foreach(Fish fish in fishCaughtList)
-            {
-                amount += fish.getPrice();
-            }
-            Debug.Log("Vous avez gagné " + amount + " argent");
-        }
-    }
+    
 
     public void FailFishing()
     {
@@ -163,6 +173,21 @@ public class Player : MonoBehaviour
 
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Decoy"))
+        {
+            collision.GetComponent<Decoy>().GetBackFish();
+        }
+    }
+
+    public void GoInBoat()
+    {
+        inBoat = true;
+        transform.position = boat.GetComponent<Boat>().navigationPlaceTransform.position;
+        transform.SetParent(boat.transform);
+        
+    }
+
 
 }
