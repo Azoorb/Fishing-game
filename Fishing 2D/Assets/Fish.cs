@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class Fish : MonoBehaviour
 {
-    [SerializeField]
-    protected Vector2 spawnMin, spawnMax;
+    public Vector2 spawnMin, spawnMax;
     [SerializeField]
     protected float speed, size;
     List<Vector2> movementPointList;
@@ -21,6 +20,7 @@ public class Fish : MonoBehaviour
     [SerializeField]
     int price;
     public Sprite deadSprite;
+    public int levelOfFish, chanceToSpawn;
 
     private void Awake()
     {

@@ -88,8 +88,9 @@ public class Decoy : MonoBehaviour
                 StockFish(Player.instance.boat.GetComponent<Boat>().fishStockPlaceTransform);
                 Player.instance.boat.GetComponent<Boat>().fishCaughtList.Add(fish.GetComponent<Fish>());
             }
-            
-            Destroy(fish);
+
+            FishManager.instance.DestroyFish(fish.GetComponent<Fish>());
+
             
         }
         Player.instance.AttachCameraAndSetPosition(Player.instance.transform);
