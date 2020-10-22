@@ -100,9 +100,9 @@ MonoBehaviour:
   speed: 2
   size: 0
   chanceToGainSpeed: 90
-  rangeToSeeDecoy: 100
-  rangeToSlowNearDecoy: 0
-  rangeToPickDecoy: 0
+  rangeToSeeDecoy: 48.4
+  rangeToSlowNearDecoy: 1.8
+  rangeToPickDecoy: 0.4
   price: 1
   deadSprite: {fileID: 21300000, guid: 5eb7b1999a8e6384db81aa2ae2372071, type: 3}
   levelOfFish: 0

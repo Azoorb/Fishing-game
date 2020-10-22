@@ -83,7 +83,7 @@ public class Decoy : MonoBehaviour
                 StockFish(pointToStock.transform);
                 Player.instance.fishCaughtList.Add(fish.GetComponent<Fish>());
             }
-            else if(Player.instance.inBoat && Player.instance.boat.GetComponent<Boat>().stockInBoatForFish> Player.instance.fishCaughtList.Count)
+            else if(Player.instance.inBoat && Player.instance.boat.GetComponent<Boat>().stockInBoatForFish> Player.instance.boat.GetComponent<Boat>().fishCaughtList.Count)
             {
                 StockFish(Player.instance.boat.GetComponent<Boat>().fishStockPlaceTransform);
                 Player.instance.boat.GetComponent<Boat>().fishCaughtList.Add(fish.GetComponent<Fish>());

@@ -42,15 +42,16 @@ public class FishManager : MonoBehaviour
     {
         for (int level = 0; level < maxLevel; level++)
         {
+            fishInWaterList.AddRange(fishToAddList);
+            foreach (Fish fish in fishToDestroyList)
+            {
+                fishInWaterList.Remove(fish);
+            }
+            fishToAddList.Clear();
+            fishToDestroyList.Clear();
             CheckIfEnoughtFish(level);
         }
-        fishInWaterList.AddRange(fishToAddList);
-        foreach(Fish fish in fishToDestroyList)
-        {
-            fishInWaterList.Remove(fish);
-        }
-        fishToAddList.Clear();
-        fishToDestroyList.Clear();
+        
     }
 
     void CheckIfEnoughtFish(int level)
@@ -63,9 +64,10 @@ public class FishManager : MonoBehaviour
                 numberFish += 1;
             }
         }
-        Debug.Log(level);
-        for(int i= numberFish; i< numeroFishInWaterDependOnLevelList[level]; i++)
+        Debug.Log(numberFish +" ;"+ numeroFishInWaterDependOnLevelList[level]);
+        for (int i= numberFish; i< numeroFishInWaterDependOnLevelList[level]; i++)
         {
+            Debug.Log("StartSpawn");
             SpawnRandomlyFish(level);
         }
         
@@ -117,7 +119,7 @@ public class FishManager : MonoBehaviour
 
     public void DestroyFish(Fish fish)
     {
-        fishToDestroyList.Remove(fish);
+        fishToDestroyList.Add(fish);
         Destroy(fish);
         CheckFish();
     }

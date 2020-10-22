@@ -16,6 +16,7 @@ public class Boat : MonoBehaviour
 
     private void Start()
     {
+        stockInBoatForFish = 3;
         fishCaughtList = new List<Fish>();
     }
     // Update is called once per frame
@@ -23,7 +24,6 @@ public class Boat : MonoBehaviour
     {
         Collider2D[] listCollider = Physics2D.OverlapCircleAll(transform.position, radiusToGoInBoat);
         Collider2D player = null;
-        Collider2D ground = null;
         foreach (Collider2D collider in listCollider)
         {
             if(collider.CompareTag("Player"))
@@ -31,33 +31,15 @@ public class Boat : MonoBehaviour
                 player = collider;
                                          
             }
-            if(collider.CompareTag("Ground"))
-            {
-                ground = collider;
-            }
+            
             
         }
         if(player != null && !Player.instance.inBoat)
         {
-            UIManager.instance.SetActiveButtonGoInBoat(true);
             Player.instance.boat = gameObject;
         }
-        else
-        {
-            UIManager.instance.SetActiveButtonGoInBoat(false);
-        }
-        if(Player.instance.inBoat)
-        {
-            
-            if(ground != null)
-            {
-                UIManager.instance.SetActiveButtonGoOutOfBoat(true);
-            }
-            else
-            {
-                UIManager.instance.SetActiveButtonGoOutOfBoat(false);
-            }
-        }
+        
+        
         
     }
 

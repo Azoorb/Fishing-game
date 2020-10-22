@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     TextMeshProUGUI moneyText;
     [SerializeField]
     GameObject buttonShop;
+    public List<int> multiplyForEachLevelList;
 
 
     private void Awake()
@@ -50,7 +51,15 @@ public class UIManager : MonoBehaviour
             int amount = 0;
             foreach(Fish fish in fishCaughtList)
             { 
-                amount += fish.getPrice();
+                if(fish.levelOfFish < multiplyForEachLevelList.Count)
+                {
+                    amount += fish.getPrice() * multiplyForEachLevelList[fish.levelOfFish];
+                }
+                else
+                {
+                    amount += fish.getPrice();
+                }
+               
             }                
             for (int i = 0; i < pointToStock.transform.childCount; i++)
             {

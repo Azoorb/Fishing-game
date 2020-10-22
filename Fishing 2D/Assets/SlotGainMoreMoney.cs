@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlotGainMoreMoney : MonoBehaviour
+public class SlotGainMoreMoney : Slot
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private List<int> multiplyForEachLevelListSerialized;
+    [HideInInspector]
+    public List<int> multiplyForEachLevelList;
+    public override void Upgrade()
     {
-        
+        multiplyForEachLevelList.Add(multiplyForEachLevelListSerialized[actualUpgradeIndex]);
+        UIManager.instance.multiplyForEachLevelList = multiplyForEachLevelList;
+        actualUpgradeIndex++;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

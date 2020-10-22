@@ -79,6 +79,10 @@ public class Player : MonoBehaviour
             {
                 StartFishing();
             }
+            else if(!CheckIfColliderAround(2, "Water"))
+            {
+                Debug.Log("Vous êtes trop loin de l'eau");
+            }
             
                
         };
@@ -144,7 +148,7 @@ public class Player : MonoBehaviour
                 groundNear = null;
                 UIManager.instance.SetActiveButtonGoOutOfBoat(false);
             }
-            else
+            else if(!inShop)
             {
                 groundNear = groundNearTemp;
                 UIManager.instance.SetActiveButtonGoOutOfBoat(true);
@@ -157,7 +161,7 @@ public class Player : MonoBehaviour
             {
                 UIManager.instance.SetActiveButtonGoInBoat(false);
             }
-            else
+            else if(!inShop)
             {
                 UIManager.instance.SetActiveButtonGoInBoat(true);
             }
