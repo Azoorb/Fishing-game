@@ -24,16 +24,21 @@ public class Fish : MonoBehaviour
     [SerializeField]
     float minWeight, maxWeight;
     float weight;
+    [SerializeField][Range(0,100)]
+    int chanceToStruggle;
+    bool canTryToStruggle;
     private void Awake()
     {
         movementPointList = new List<Vector2>();
         pointToGo = new Vector2(0, 0);
         minDistanceBetweenMovementPoint = Mathf.Abs(spawnMin.x -spawnMax.x)/10;
         isGrab = false;
+        canTryToStruggle = true;
     }
 
     void Start()
     {
+        
         RandomSize();
         CreateMovementPoint();
         StartCoroutine(RandomGainSpeed());
@@ -99,6 +104,10 @@ public class Fish : MonoBehaviour
             {
                 MoveRandomly();
             }
+        }
+        else if(canTryToStruggle)
+        {
+            StartCoroutine(TryToStruggle());
         }
        
     }
@@ -186,6 +195,22 @@ public class Fish : MonoBehaviour
         }
     }
 
+    private IEnumerator TryToStruggle()
+    {
+        int randomChanceToStruggle = Random.Range(0, 100);
+        if (randomChanceToStruggle <= chanceToStruggle + (weight * levelOfFish))
+        {
+            Struggle();
+        }
+        yield return new WaitForSeconds(2);
+        canTryToStruggle = true;
+    }
+
+    void Struggle()
+    {
+
+    }
+
     public virtual void MoveRandomly()
     {
         if((pointToGo.x == 0 && pointToGo.y == 0) || Vector2.Distance(transform.position,pointToGo)<0.25)
@@ -226,10 +251,7 @@ public class Fish : MonoBehaviour
         return pointToReturn;
     }
 
-    public virtual void BeCatch()
-    {
-
-    }
+  
 
     private void OnDrawGizmosSelected()
     {

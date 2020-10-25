@@ -108,3 +108,4 @@ MonoBehaviour:
   chanceToSpawn: 100
   minWeight: 0.5
   maxWeight: 2
+  chanceToStruggle: 33
