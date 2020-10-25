@@ -1822,7 +1822,6 @@ MonoBehaviour:
   spawnMin: {x: -1.24, y: -1.23}
   spawnMax: {x: 3.25, y: 0.5}
   speed: 0.5
-  size: 0
   chanceToGainSpeed: 90
   rangeToSeeDecoy: 0
   rangeToSlowNearDecoy: 0
@@ -1831,6 +1830,8 @@ MonoBehaviour:
   deadSprite: {fileID: 0}
   levelOfFish: 0
   chanceToSpawn: 0
+  minWeight: 0
+  maxWeight: 0
 --- !u!212 &861716452
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3894,7 +3895,7 @@ Transform:
   m_Children:
   - {fileID: 2048957418}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1957928432
 MonoBehaviour:
@@ -4532,7 +4533,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2284320237697078769, guid: dfb468c0234bf1241a34a27ee2a30964, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2284320237697078769, guid: dfb468c0234bf1241a34a27ee2a30964, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

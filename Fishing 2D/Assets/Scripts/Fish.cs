@@ -7,7 +7,7 @@ public class Fish : MonoBehaviour
 {
     public Vector2 spawnMin, spawnMax;
     [SerializeField]
-    protected float speed, size;
+    protected float speed;
     List<Vector2> movementPointList;
     int totalMovementPoint = 10;
     float minDistanceBetweenMovementPoint;
@@ -18,10 +18,12 @@ public class Fish : MonoBehaviour
     float rangeToSeeDecoy,rangeToSlowNearDecoy, rangeToPickDecoy;
     bool isGrab, seeTheDecoy;
     [SerializeField]
-    int price;
+    float price;
     public Sprite deadSprite;
     public int levelOfFish, chanceToSpawn;
-
+    [SerializeField]
+    float minWeight, maxWeight;
+    float weight;
     private void Awake()
     {
         movementPointList = new List<Vector2>();
@@ -32,8 +34,16 @@ public class Fish : MonoBehaviour
 
     void Start()
     {
+        RandomSize();
         CreateMovementPoint();
         StartCoroutine(RandomGainSpeed());
+    }
+
+    void RandomSize()
+    {
+        weight = Random.Range(minWeight, maxWeight);
+        transform.localScale = transform.localScale * weight;
+        price *= weight;
     }
 
     Collider2D CheckIfDecoyAround()
@@ -191,7 +201,16 @@ public class Fish : MonoBehaviour
         Vector2 diff = (Vector2)transform.position - toGo;
         diff.Normalize();
 
+
         float rotZ = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
+        if(Mathf.Abs(rotZ)>=90)
+        {
+            GetComponent<SpriteRenderer>().flipY = true;
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().flipY = false;
+        }
         transform.rotation = Quaternion.Euler(transform.rotation.x, transform.rotation.y, rotZ);
         transform.position = Vector2.MoveTowards(transform.position, toGo, speed * speedMultiply * Time.deltaTime);
     }
@@ -225,7 +244,7 @@ public class Fish : MonoBehaviour
 
     public int getPrice()
     {
-        return price;
+        return (int)price;
     }
 
     
